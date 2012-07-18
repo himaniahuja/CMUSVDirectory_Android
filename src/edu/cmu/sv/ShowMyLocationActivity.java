@@ -15,6 +15,10 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Point;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -27,6 +31,7 @@ import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
+import com.google.android.maps.Overlay;
 
 public class ShowMyLocationActivity extends MapActivity {
 
@@ -38,7 +43,28 @@ public class ShowMyLocationActivity extends MapActivity {
 	MapView mapview;
 	LocationManager locationManager;
 	LocationListener locationListener;
-	
+	GeoPoint geopoint;
+
+
+	class MapOverlay extends com.google.android.maps.Overlay
+	{
+	    @Override
+	    public boolean draw(Canvas canvas, MapView mapView, 
+	    boolean shadow, long when) 
+	    {
+	        super.draw(canvas, mapView, shadow);                   
+
+	        //---translate the GeoPoint to screen pixels---
+	        Point screenPts = new Point();
+	        mapView.getProjection().toPixels(geopoint, screenPts);
+
+	        //---add the marker---
+	        Bitmap bmp = BitmapFactory.decodeResource(
+	            getResources(), R.drawable.pin3);            
+	        canvas.drawBitmap(bmp, screenPts.x, screenPts.y-50, null);         
+	        return true;
+	    }
+	} 
 	
 	public void onCreate(Bundle savedInstanceState) {
     	
@@ -93,15 +119,26 @@ public class ShowMyLocationActivity extends MapActivity {
 				int lontitue = (int)lon;
 				int latitute = (int)lat;
 				
-				GeoPoint geopoint = new GeoPoint(latitute, lontitue);
+				geopoint = new GeoPoint(latitute, lontitue);
 				mapController.animateTo(geopoint);
 				
 				currentLongitude = location.getLongitude();
 				currentLatitude = location.getLatitude();
-				getAddress();
+				String address = getAddress();
+				if (address.equalsIgnoreCase(addressText.getText().toString())) {
+					Logger.getAnonymousLogger().info("address : " + address + " already found");
+					return;
+				}
 				
-				locationManager.removeUpdates(locationListener);
-				locationManager = null;
+				//---Add a location marker---
+			    MapOverlay mapOverlay = new MapOverlay();
+			    List<Overlay> listOfOverlays = mapview.getOverlays();
+			    // listOfOverlays.clear();
+			    listOfOverlays.add(mapOverlay);  
+			    
+			    // mapview.invalidate();			 
+			    //	locationManager.removeUpdates(locationListener);
+			    //	locationManager = null;
 				
 				
 				// Setting the current location in the backend. 
@@ -124,9 +161,9 @@ public class ShowMyLocationActivity extends MapActivity {
 				    HttpResponse response = httpclient.execute(httppost);
 				    Logger.getAnonymousLogger().info("response : " + response);
 				} catch (ClientProtocolException e) {
-				    // TODO Auto-generated catch block
+				    e.printStackTrace();
 				} catch (IOException e) {
-				    // TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
 		};
@@ -134,9 +171,10 @@ public class ShowMyLocationActivity extends MapActivity {
 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
 		locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,0,0,locationListener);
 		
+		
 	}
 	
-	void getAddress(){
+	private String getAddress(){
 	        try{
 	            Geocoder gcd = new Geocoder(this, Locale.getDefault());
 	            List<Address> addresses = 
@@ -151,12 +189,13 @@ public class ShowMyLocationActivity extends MapActivity {
 	                        result.append("\n");
 	                    } 
 	                }
-	                addressText.setText(result.toString());
+	                return result.toString();
 	            }
 	        }
 	        catch(IOException ex){
 	            addressText.setText(ex.getMessage().toString());
 	        }
+	        return null;
 	}
 	
 	@Override

@@ -4,6 +4,8 @@
     <string name="app_name">CMUSV Phone Directory</string>
     <string name="phone_call_activity"></string>
     <string name="sms_activity"></string>
+    <string name="message_activity"></string>
+    <string name="message_share_activity"></string>
     <string name="cmusv_person_activity"></string>
     <string name="cmusv_location_activity">You are here !</string>
      <string name = "email_activity"></string>
@@ -17,6 +19,8 @@
    
     <string name = "search_hint">Find People</string>
     <string name = "check_in">Tell everyone where you are!</string>
+    <string name = "message_share">Share a message with your friends</string>
+    <string name = "share">Share!!!</string>
     <string name = "find_location">Not available</string>
     <string name = "no_list_data">Not available </string>
      <string-array name="names">

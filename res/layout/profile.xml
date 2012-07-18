@@ -1,4 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:scrollbars="vertical" >
+
+    <TableLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <TableRow android:gravity="center" >
+
+            <ImageView
+                android:id="@+id/image_view"
+                android:layout_width="240dp"
+                android:layout_height="180dp"
+                android:contentDescription="@string/desc" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:gravity="center" >
+
+            <TextView
+                android:id="@+id/name_on_profile"
+                android:layout_width="fill_parent"
+                android:layout_height="50dp"
+                android:background="#ff990000"
+                android:gravity="center"
+                android:textColor="#ffffffff"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                android:typeface="sans" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/blank1"
+                android:layout_width="fill_parent"
+                android:layout_height="15dp"
+                android:background="#ff000000" />
+        </TableRow>
+
+        <TableRow android:gravity="center" >
+
+            <LinearLayout
+                android:gravity="center"
+                android:orientation="horizontal" >
+
+                <Button
+                    android:id="@+id/button_phone"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:background="@drawable/telephone_icon1"
+                    android:onClick="onClick" />
+
+                <Button
+                    android:id="@+id/button_pin"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:background="@drawable/pin2"
+                    android:onClick="onClick" />
+            </LinearLayout>
+        </TableRow>
+
+        <TableRow android:gravity="center" >
+
+            <LinearLayout
+                android:gravity="center"
+                android:orientation="horizontal" >
+
+                <Button
+                    android:id="@+id/button_sms"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:background="@drawable/sms_icon2"
+                    android:onClick="onClick" />
+
+                <Button
+                    android:id="@+id/button_email"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:background="@drawable/email"
+                    android:onClick="onClick" />
+            </LinearLayout>
+        </TableRow>
+
+        <TableRow android:gravity="center" >
+
+            <LinearLayout
+                android:gravity="center"
+                android:orientation="horizontal" >
+
+                <Button
+                    android:id="@+id/button_calendar"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:background="@drawable/calendar_icon"
+                    android:onClick="onClick" />
+                <Button
+                    android:id="@+id/button_message"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:background="@drawable/message_icon"
+                    android:onClick="onClick" />
+            </LinearLayout>
+        </TableRow>
+    </TableLayout>
+
+</ScrollView><!--
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/widget47"
     android:layout_width="fill_parent"
@@ -67,20 +178,24 @@
         android:layout_alignLeft="@+id/button_sms"
         android:background="@drawable/email"
         android:onClick="onClick"/>
+    <Button
+        android:id="@+id/button_calendar"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:onClick="onClick"/>
 
 </RelativeLayout>
+-->
 
-
-    <!--
+<!--
          <TextView
         android:id="@+id/blank3"
         android:layout_width="fill_parent"
         android:layout_height="15dp"
         android:background="#ff000000" />
-    -->
+-->
 
-
-    <!--
+<!--
          <Button
         android:id="@+id/button_phone"
         android:layout_width="45dp"
@@ -124,10 +239,9 @@
         android:textColor="#ffffffff"
         android:textSize="24sp"
         android:typeface="sans" />
-    -->
+-->
 
-
-    <!--
+<!--
          <ListView
         android:id="@android:id/list"
         android:layout_width="fill_parent"
@@ -170,4 +284,4 @@
         android:layout_height="15dp"
         android:layout_below="@+id/email_person"
         android:background="#ff000000" />
-    -->
+-->

@@ -4,19 +4,23 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Logger;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import edu.cmu.sv.model.Message;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -26,14 +30,15 @@ import android.widget.TextView;
 
 public class CMUSVPersonActivity extends Activity {
 
+		private static String HOSTNAME = "http://cmusvdirectory.appspot.com";
 		String phone_number = null;
 		ListAdapter adapter = null;
 		ListView lView = null;
 		HashMap<String,String> phone_list = null;
 		HashMap<String, String> location_info = null;
+		ArrayList<Message> messageList = null;
 	
-	  @SuppressWarnings("unchecked")
-	@Override
+	  @Override
 		public void onCreate(Bundle savedInstanceState) {
 	    	
 		  super.onCreate(savedInstanceState);
@@ -47,7 +52,8 @@ public class CMUSVPersonActivity extends Activity {
 		  try {
 			
 			HashMap<String, String> person = (HashMap<String, String>) getIntent().getSerializableExtra("person");
-			
+		    final String email = person.get("email");
+		    final String email_id = person.get("email").split("@")[0];
 			
 		    // Get Image of person
 		    Object content = null;
@@ -134,26 +140,23 @@ public class CMUSVPersonActivity extends Activity {
 		    	
 			    
 			// On click for email button
-		    final String final_Email = person.get("email");
 			final Button email_button = (Button) findViewById(R.id.button_email);
 		    	 
 		    email_button.setOnClickListener(new View.OnClickListener() {
 		              public void onClick(View v) {
 		            	  Intent intent = new Intent(CMUSVPersonActivity.this, EmailActivity.class);
 		    			   Bundle b5 = new Bundle();
-		    			   b5.putString("email_id", final_Email);
+		    			   b5.putString("email_id", email);
 		    		   	   intent.putExtras(b5);
 		    		   	   startActivityForResult(intent, 0);
 		              }
 		          });
 	
 		    // on click location button
-		    String email = person.get("email");
-		    String email_id = person.get("email").split("@")[0];
 		    
 		    Logger.getAnonymousLogger().info(email);
 		    Logger.getAnonymousLogger().info(email_id);
-		    String locationData = CMUSVUtils.readPeopleData("http://cmusvdirectory.appspot.com/Location.json?limit=1&email=" + email_id);
+		    String locationData = CMUSVUtils.readPeopleData(HOSTNAME + "/Location.json?limit=1&email=" + email_id);
 		    Logger.getAnonymousLogger().info(locationData);
 	    	JSONArray locationJson = null;
 	    	
@@ -192,9 +195,56 @@ public class CMUSVPersonActivity extends Activity {
 	    			  
 	              }
 	        });
-    	
+
+	    	
+	    	// Calendar integration 
+	    	
+	    	final Button calendarButton = (Button) findViewById(R.id.button_calendar);
+	    	calendarButton.setOnClickListener(new View.OnClickListener() {
+	    		 
+	    		@Override
+	    		public void onClick(View arg0) {
+	    			//https://www.google.com/calendar/embed?src=himani.ahuja@west.cmu.edu
+	    			Intent intent = new Intent(Intent.ACTION_VIEW, 
+	    			     Uri.parse("https://www.google.com/calendar/embed?mode=WEEK&src=" + email_id + "@west.cmu.edu"));
+	    			startActivity(intent);
+	     
+	    		}
+	     	});
     
-    
+	    	// Get user messages 
+	    	
+	    	String messageData = CMUSVUtils.readPeopleData("http://cmusvdirectory.appspot.com/Message.json?limit=20&email=" + email_id);
+	    	JSONArray messageJson = null;
+	    	messageList = new ArrayList<Message>();
+
+	    	messageJson = new JSONArray(messageData);
+	    	if (messageJson.length() != 0){
+	    		for (int i = 0 ; i < messageJson.length(); i++) {
+	    			JSONObject message = messageJson.getJSONObject(i);
+	    			Message m = new Message();
+	    			m.setText(message.getString("text"))
+	    			    .setEmail(message.getString("email"))
+	    			    .setDateTime(message.getString("DateTime"));
+	    		
+	    			messageList.add(m);
+	    		}
+	    	}
+
+	    	  final Button message_button = (Button) findViewById(R.id.button_message);
+	    	  message_button.setOnClickListener(new View.OnClickListener() {
+		              public void onClick(View v) {
+		            	  Intent intent = new Intent(CMUSVPersonActivity.this, MessageActivity.class);
+		    			   Bundle b4 = new Bundle();
+		    			   b4.putSerializable("message_list", messageList);
+		    		   	   intent.putExtras(b4);
+		    		   	   startActivityForResult(intent, 0);
+		              }
+		        });
+			   
+	    	
+	    	
+	    	
 	  } catch (MalformedURLException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
